@@ -253,4 +253,4 @@ for(model_option in c("lc","apc","rh")){
 }}
 
 fwrite(out,
-       "C:\\Users\\gpitt\\Documents\\Postdoc\\Torino\\Mortality\\results\\scandinavian_validation.csv")
+       "C:\\Users\\gpitt\\Documents\\Postdoc\\Torino\\Mortality\\results\\scandinavian_validation_l2.csv")

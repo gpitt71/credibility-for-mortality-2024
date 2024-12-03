@@ -4,7 +4,8 @@ library(HMDHFDplus)
 library(tidyr)
 library(dplyr)
 library(demography)
-
+library(ggplot2)
+library(RColorBrewer)
 # Full model ----
 
 G1.mx <- hmd.mx(country = "USA",
@@ -49,8 +50,8 @@ for (model_option in c("lc", "apc", "rh")) {
     D1 <- E1  * G1.mx$rate[[series_code]][as.character(ages.fit), as.character(years.fit)]
     D2 <- E2  * G2.mx$rate[[series_code_2]][as.character(ages.fit), as.character(years.fit)]
     
-    Ext <- E1 + E2
-    Dxt <-  D1 + D2
+    Ext <- E1 #+ E2
+    Dxt <-  D1 #+ D2
     
     datahat <- structure(list(Dxt = Dxt, 
                               Ext = Ext, 
@@ -61,16 +62,22 @@ for (model_option in c("lc", "apc", "rh")) {
                          class = "StMoMoData")
     
     
+    list_of_extra_exposures <- list()
+    
+    list_of_extra_exposures[[1]] <- list(Dxt=D2,
+                                         Ext=E2)
+    
     mortality_model_fit <- fit(mortality_model,
                                data = datahat,
                                years.fit = years.fit,
-                               ages.fit = ages.fit)
+                               ages.fit = ages.fit,
+                               list_of_extra_exposures = list_of_extra_exposures)
     
     
-    cv.arima.kt <- auto.arima(as.numeric(mortality_model_fit$kt))
+    cv.arima.kt <- auto.arima(as.numeric(mortality_model_fit$kt), ic ="bic")
     
     if(model_option != "lc"){
-      cv.arima.gc <- auto.arima(as.numeric(mortality_model_fit$gc))
+      cv.arima.gc <- auto.arima(as.numeric(mortality_model_fit$gc), ic ="bic")
       gc.order <- unname(arimaorder(cv.arima.gc))
     }else{
       
@@ -143,7 +150,7 @@ for (model_option in c("lc", "apc", "rh")) {
                                 years.fit = years.fit,
                                 ages.fit = ages.fit)
     
-    cv.arima.kt_1 <- auto.arima(as.numeric(mortality_model_fit1$kt))
+    cv.arima.kt_1 <- auto.arima(as.numeric(mortality_model_fit1$kt), ic ="bic")
     
     G2data <- StMoMoData(G2.mx, series = series_code_2, type = "central")
     mortality_model_fit2 <- fit(mortality_model,
@@ -151,12 +158,12 @@ for (model_option in c("lc", "apc", "rh")) {
                                 years.fit = years.fit,
                                 ages.fit = ages.fit)
     
-    cv.arima.kt_2 <- auto.arima(as.numeric(mortality_model_fit2$kt))
+    cv.arima.kt_2 <- auto.arima(as.numeric(mortality_model_fit2$kt), ic ="bic")
     
     if(model_option != "lc"){
-      cv.arima.gc_1 <- auto.arima(as.numeric(mortality_model_fit1$gc))
+      cv.arima.gc_1 <- auto.arima(as.numeric(mortality_model_fit1$gc), ic ="bic")
       gc.order_1 <- unname(arimaorder(cv.arima.gc_1))
-      cv.arima.gc_2 <- auto.arima(as.numeric(mortality_model_fit2$gc))
+      cv.arima.gc_2 <- auto.arima(as.numeric(mortality_model_fit2$gc), ic ="bic")
       gc.order_2 <- unname(arimaorder(cv.arima.gc_2))
       
     }else{

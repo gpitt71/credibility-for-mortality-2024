@@ -1,10 +1,10 @@
 library(data.table)
 library(xtable)
-dt1 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/gender_validation_testing_selection.csv")
+dt1 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/gender_validation_testing_selection_l2.csv")
 dt1[["group"]] <- "G2"
-dt2 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/scandinavian_validation_testing_selection.csv")
+dt2 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/scandinavian_validation_testing_selection_l2.csv")
 dt2[["group"]] <- "G1"
-dt3 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/ita_validation_testing_selection.csv")
+dt3 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/ita_validation_testing_selection_l2.csv")
 dt3[["group"]] <- "G3"
 
 
@@ -21,7 +21,7 @@ tmp <- dt[order(forecasting_horizon),
                              "mse_val",
                              "Value")]
 
-tmp[,model:=toupper(model)]
+tmp[,model:=toupper(model)][,mse_val := mse_val *10e03][,Value := Value *10e03]
 
 
 tmp[, family := fcase(
@@ -34,8 +34,8 @@ colnames(tmp) <- c("Forecasting Horizon",
                    "Group",
                    "Selected Model",
                    "Family",
-                   "MARE (val)",
-                   "MARE (test)")
+                   "MAE (val)",
+                   "MAE (test)")
 
 
 
@@ -47,11 +47,11 @@ print(xtable(tmp, digits=4),include.rownames = FALSE)
 
 library(tidyr)
 
-dt1 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/gender_validation.csv")
+dt1 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/gender_validation_l2.csv")
 dt1[["group"]] <- "G2"
-dt2 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/scandinavian_validation.csv")
+dt2 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/scandinavian_validation_l2.csv")
 dt2[["group"]] <- "G1"
-dt3 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/ita_validation.csv")
+dt3 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/ita_validation_l2.csv")
 dt3[["group"]] <- "G3"
 
 

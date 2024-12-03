@@ -143,19 +143,30 @@ for (ix in prediction_horizon) {
     assign(paste0("D", i), l[[i]]$deaths[as.character(ages.fit), as.character(years.fit)])
   }
   
-  Ext <- 0
-  Dxt <- 0
+  # Ext <- 0
+  # Dxt <- 0
+  # 
+  # for (i in 1:number_of_groups) {
+  #   Ext <- Ext + get(paste0("E", i))
+  #   Dxt <- Dxt + get(paste0("D", i))
+  # }
   
-  for (i in 1:number_of_groups) {
-    Ext <- Ext + get(paste0("E", i))
-    Dxt <- Dxt + get(paste0("D", i))
+  list_of_extra_exposures <- list()
+  for (i in 2:number_of_groups) {
+    
+    tmp_list <- list()
+    
+    tmp_list[['Dxt']] <- get(paste0("D", i))
+    tmp_list[['Ext']] <- get(paste0("E", i))
+    list_of_extra_exposures[[i-1]] <- tmp_list
+    
   }
   
   
   datahat <- structure(
     list(
-      Dxt = Dxt,
-      Ext = Ext,
+      Dxt = D1,
+      Ext = E1,
       ages = ages.fit,
       years = years.fit,
       type = 'central',
@@ -169,14 +180,17 @@ for (ix in prediction_horizon) {
   mortality_model_fit <- fit(mortality_model,
                              data = datahat,
                              years.fit = years.fit,
-                             ages.fit = ages.fit)
+                             ages.fit = ages.fit,
+                             list_of_extra_exposures=list_of_extra_exposures)
 
     year.predict <- max(years.fit)+forecasting_horizon
     
 
-    cv.arima.kt <- auto.arima(as.numeric(mortality_model_fit$kt))
+    cv.arima.kt <- auto.arima(as.numeric(mortality_model_fit$kt),
+                              ic="bic")
     if(model_option != "lc"){
-      cv.arima.gc <- auto.arima(as.numeric(mortality_model_fit$gc))
+      cv.arima.gc <- auto.arima(as.numeric(mortality_model_fit$gc),
+                                ic="bic")
       gc.order <- unname(arimaorder(cv.arima.gc))
     }else{
       
@@ -208,7 +222,7 @@ for (ix in prediction_horizon) {
     mse_0_ix <- 0
 
     for (i in 1:N_groups) {
-      mse_0_ix <- mse_0_ix + (abs((get(paste0("muxt_actual_", i))-muxt_hat_predicted)))/get(paste0("muxt_actual_", i))
+      mse_0_ix <- mse_0_ix + (abs((get(paste0("muxt_actual_", i))-muxt_hat_predicted)))#/get(paste0("muxt_actual_", i))
 
     }
     
@@ -233,7 +247,7 @@ for (ix in prediction_horizon) {
 
       for (i in 1:N_groups) {
         
-        mse_1_ix <- mse_1_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("muhat", i))))/get(paste0("muxt_actual_", i))
+        mse_1_ix <- mse_1_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("muhat", i))))#/get(paste0("muxt_actual_", i))
         
       }
       
@@ -262,11 +276,13 @@ for (ix in prediction_horizon) {
                      years.fit = years.fit,
                      ages.fit = ages.fit))
           
-          assign(paste0("cv.arima.kt_", i), auto.arima(as.numeric(get(paste0("mortality_model_fit",i))$kt)))
+          assign(paste0("cv.arima.kt_", i), auto.arima(as.numeric(get(paste0("mortality_model_fit",i))$kt),
+                                                       ic="bic"))
           
           
           if(model_option != "lc"){
-            assign(paste0("cv.arima.gc_", i), auto.arima(as.numeric(get(paste0("mortality_model_fit",i))$gc)))
+            assign(paste0("cv.arima.gc_", i), auto.arima(as.numeric(get(paste0("mortality_model_fit",i))$gc),
+                                                         ic="bic"))
             assign(paste0("gc.order_", i), unname(arimaorder(get(paste0("cv.arima.gc_", i)))))
             
           }else{
@@ -314,7 +330,7 @@ for (ix in prediction_horizon) {
             assign(paste0("mm_forecast_", i) , get(paste0("mortality_model_forecast",i))$rates)
           }
 
-          mse_2_ix <- mse_2_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("mm_forecast_", i))))/get(paste0("muxt_actual_", i))
+          mse_2_ix <- mse_2_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("mm_forecast_", i))))#/get(paste0("muxt_actual_", i))
 
       }
       
@@ -339,5 +355,5 @@ for (ix in prediction_horizon) {
 
 
 fwrite(out,
-       "C:\\Users\\gpitt\\Documents\\Postdoc\\Torino\\Mortality\\results\\ita_validation.csv")
+       "C:\\Users\\gpitt\\Documents\\Postdoc\\Torino\\Mortality\\results\\ita_validation_l2.csv")
 
