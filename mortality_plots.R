@@ -217,9 +217,35 @@ for (model_option in c("lc", "apc", "rh")) {
                                     "C2" = "#a71429"),
                          labels = c(expression(C[x]^1), expression(C[x]^2))) 
     
-    ggsave(paste0("C:\\Users\\gpitt\\Pictures\\mortality_project\\",model_option,"Cs.pdf"),
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"Cs.pdf"),
            width = 8,
            height= 5)
+    
+    
+    chosen_age="65"
+    Cs_frame <- data.frame(y=D1[chosen_age,]/(E1*muxt_hat)[chosen_age,],
+                           x=as.integer(colnames(D1))) %>%
+      filter(y>0)
+    
+    Cs_frame %>%
+      ggplot(aes(x=x,
+                 y=y)) +
+      geom_point() +
+      geom_hline(yintercept=C1[chosen_age], linetype = "dotted", size= 1.2, color="#a71429") +
+      geom_hline(yintercept=C1[chosen_age]+sqrt(varthetax_1[chosen_age]), size= 1.2, color="#4169E1", linetype = "dotted") +
+      geom_hline(yintercept=C1[chosen_age]-sqrt(varthetax_1[chosen_age]), size= 1.2, color="#4169E1", linetype = "dotted") +
+      theme_bw() +
+      scale_x_continuous(breaks=c(10,20,30,40,50))+
+      theme(text = element_text(size = text_size),
+            legend.position="top")+
+      ylab("")+
+      xlab("")+
+      labs(color="")
+    
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"g1_simulation_cs.pdf"),
+           width = 8,
+           height= 5)
+  
     
     dt_Zs <- data.frame(
       Zs = c(1-Z_1,1-Z_2),
@@ -242,7 +268,7 @@ for (model_option in c("lc", "apc", "rh")) {
                          labels = c(expression(1-Z[x]^1), expression(1-Z[x]^2))) 
     
     
-    ggsave(paste0("C:\\Users\\gpitt\\Pictures\\mortality_project\\",model_option,"Zs.pdf"),
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"Zs.pdf"),
            width = 8,
            height= 5)
     
@@ -270,7 +296,7 @@ for (model_option in c("lc", "apc", "rh")) {
                          labels = c("Observed Female", "Observed Male", "Predicted (S1)")) 
     
     
-    ggsave(paste0("C:\\Users\\gpitt\\Pictures\\mortality_project\\",model_option,"s1.pdf"),
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"s1.pdf"),
            width = 8,
            height= 5)
     
@@ -301,7 +327,7 @@ for (model_option in c("lc", "apc", "rh")) {
                          labels = c("Observed Female", "Observed Male", "Predicted (S2, Female)", "Predicted (S2, Male)"))
     
     
-    ggsave(paste0("C:\\Users\\gpitt\\Pictures\\mortality_project\\",model_option,"s2.pdf"),
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"s2.pdf"),
            width = 8,
            height= 5)
     
@@ -332,7 +358,7 @@ for (model_option in c("lc", "apc", "rh")) {
                          labels = c("Observed Female", "Observed Male", "Predicted (S3, Female)", "Predicted (S3, Male)"))
     
     
-    ggsave(paste0("C:\\Users\\gpitt\\Pictures\\mortality_project\\",model_option,"s3.pdf"),
+    ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"s3.pdf"),
            width = 8,
            height= 5)
     
