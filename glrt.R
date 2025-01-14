@@ -144,7 +144,7 @@ C2_matrix <- matrix(rep(C2, dim(D1)[2]),
 
 
 
-lik_h0 <- sum(D1*log(E1*muxt_hat)-E1*muxt_hat-lfactorial(D1))+sum(D2*log(E2*muxt_hat)-E2*muxt_hat-lfactorial(D2))#+sum(D3*log(E3*muxt_hat)-E3*muxt_hat)
+lik_h0 <- sum(D1*log(E1*muxt_hat)-E1*muxt_hat-lfactorial(D1))+sum(D2*log(E2*muxt_hat)-E2*muxt_hat-lfactorial(D2)) #+sum(D3*log(E3*muxt_hat)-E3*muxt_hat)
 lik_h1 <- sum(D1*log(E1*muxt_hat*C1_matrix)-E1*muxt_hat*C1_matrix-lfactorial(D1))+sum(D2*log(E2*muxt_hat*C2_matrix)-E2*muxt_hat*C2_matrix-lfactorial(D2))#+sum(D3*log(E3*muxt_hat*C3_matrix)-E3*muxt_hat*C3_matrix)
 
 lrt <- -2*(lik_h0- lik_h1)

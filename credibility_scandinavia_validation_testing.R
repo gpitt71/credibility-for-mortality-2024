@@ -264,6 +264,7 @@ for(model_option in c("lc","apc","rh")){
                                             kt.method = "iarima",
                                             kt.order=unname(arimaorder(cv.arima.kt_1)),
                                             h = forecasting_horizon)
+      
       mortality_model_forecast2 <- forecast(mortality_model_fit2, 
                                             gc.order = gc.order_2,
                                             kt.method = "iarima",

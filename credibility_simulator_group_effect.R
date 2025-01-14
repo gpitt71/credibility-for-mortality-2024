@@ -10,7 +10,7 @@ N <- 100000
 
 
 Q1 <- 0.8
-N1 <- N*Q1
+N1 <- round(N*Q1)
 ages_1 <- -65:0
 tmp_df <- data.frame("birth"=rep(ages_1,each=N),
                      "death"=rep(rep(NA,N),each=length(ages_1)),
@@ -42,13 +42,13 @@ ages.fit <- 50:100
 years.fit <- 1950:2016
 LCfitMale <- fit(LC, data = EWStMoMoMale, ages.fit = ages.fit, years.fit = years.fit)
 
-t <- 30
+t <- 50
 LCforecastMale <- forecast(LCfitMale, h = t)
 plot(LCforecastMale)
 
 
 d_k <- apply(LCforecastMale$rates, 2, function(x) stepfun((min(ages.fit)+1):100, x))
-breaks <- 1:29
+breaks <- 1:(t-1)
 death_male <- piecewise_xy(breaks,d_k)
 
 # d_k <- apply(LCforecastMale$rates, 2, function(x) stepfun(66:100, x))
@@ -106,10 +106,13 @@ death_max <- max(sapply(d_k, function(x) { max(x) }))
                   parameters = params,
                   time = t,
                   age_max = 110,
-                  multithreading = TRUE)}
+                  multithreading = TRUE)
+  
+  
+  }
 
 ages.fit <- 50:80
-years.fit <- 0:29
+years.fit <- 0:(t-1)
 
 N_groups <- 3
 
@@ -153,7 +156,7 @@ mortality_model_lc <- lc(link="log")
 mortality_model_apc <- apc(link="log")
 mortality_model_rh <- rh(link="log")
 
-model_option<-"lc"
+model_option<-"rh"
 
 
 test_statistic <- nll0<- nll1 <- aic_m0<- aic_m1<- bic_m0 <- bic_m1<- NULL
@@ -178,11 +181,11 @@ for (i in 2:N_groups) {
 
 if(model_option=="rh"){
   
-  mortality_model_fit <- fit(mortality_model, 
+  mortality_model_fit <- fit(mortality_model,
                                                   data = datahat,
                                                   years.fit = years.fit,
                                                   ages.fit = ages.fit,
-                                                  start.ax = start.ax, 
+                                                  start.ax = start.ax,
                                                   start.bx = start.bx,
                                                   start.gc = start.gc,
                                                   start.kt = start.kt,
@@ -203,6 +206,8 @@ if(model_option == "lc"){
   start.bx = mortality_model_fit$bx
   start.kt = mortality_model_fit$kt
 }
+  
+  
 forecasting_horizon<-1
 
 year.predict <- max(years.fit)+forecasting_horizon
@@ -226,7 +231,6 @@ mortality_model_forecast <- forecast(mortality_model_fit,
 
 
 muxt_hat <- mortality_model_forecast$fitted
-
 
 
 C1 <- apply(D1,1,sum,na.rm=T)/apply(E1*muxt_hat,1,sum,na.rm=T)
