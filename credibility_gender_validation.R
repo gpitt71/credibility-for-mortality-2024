@@ -121,7 +121,7 @@ for(forecasting_horizon in c(1,5,12)){
       mse_0_ix <- 0
 
       for (i in 1:N_groups) {
-        mse_0_ix <- mse_0_ix + (abs((get(paste0("muxt_actual_", i))-muxt_hat_predicted)))#/get(paste0("muxt_actual_", i))
+        mse_0_ix <- mse_0_ix + (abs((get(paste0("muxt_actual_", i))-muxt_hat_predicted)))/get(paste0("muxt_actual_", i))
 
         }
       
@@ -154,7 +154,7 @@ for(forecasting_horizon in c(1,5,12)){
 
       for (i in 1:N_groups) {
         
-        mse_1_ix <- mse_1_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("muhat", i))))#/get(paste0("muxt_actual_", i))
+        mse_1_ix <- mse_1_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("muhat", i))))/get(paste0("muxt_actual_", i))
 
       }
       
@@ -221,7 +221,7 @@ for(forecasting_horizon in c(1,5,12)){
       mse_2_ix <- 0
 
       for(i in 1:N_groups){
-        mse_2_ix <- mse_2_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("mm_forecast_", i))))#/get(paste0("muxt_actual_", i))     
+        mse_2_ix <- mse_2_ix + (abs(get(paste0("muxt_actual_", i))-get(paste0("mm_forecast_", i))))/get(paste0("muxt_actual_", i))     
 
       }
       
@@ -244,5 +244,5 @@ for(forecasting_horizon in c(1,5,12)){
 }
 
 
-fwrite(out,
-       "C:\\Users\\gpitt\\Documents\\Postdoc\\Torino\\Mortality\\results\\gender_validation_l2.csv")
+data.table::fwrite(out,
+       "~/GitHub/credibility-for-mortality-2024/output/gender_rolling_window.csv")

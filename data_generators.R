@@ -162,7 +162,8 @@ newI.out = false;"
 
 data_generator_1 <- function(age_sample_size = 100000,
                              super_pop_share = 0.8,
-                             seed = 1996){
+                             seed = 1996,
+                             risk_classes_distribution=c(.8,.2)){
   
   N <- age_sample_size
   
@@ -182,7 +183,7 @@ data_generator_1 <- function(age_sample_size = 100000,
                        "risk_cls"= sample(c(2,3), 
                                           size=(N-N1)*age_classes,
                                           replace=T,
-                                          prob=c(.8,.2)))
+                                          prob=risk_classes_distribution))
   
   pop_df <- rbind(tmp_df,
                   pop_df)
@@ -209,7 +210,7 @@ data_generator_1 <- function(age_sample_size = 100000,
   breaks <- 1:(t-1)
   death_male <- piecewise_xy(breaks,d_k)
   
-  params <- list("death_male" = death_male, "alpha" = c(1.3,0.8,1))
+  params <- list("death_male" = death_male, "alpha" = c(1,0.8,1.3))
   
   params$mu <- c(0.001,0.06,0.02)
   
