@@ -129,8 +129,17 @@ for (model_option in c("lc", "apc", "rh")) {
     Fxt_1 <- D1 / E1
     Fxt_2 <- D2 / E2
     
-    varthetax_1 <- apply(((Fxt_1 - muxt_hat) ^ 2) / (muxt_hat ^ 2), 1, mean)
-    varthetax_2 <- apply(((Fxt_2 - muxt_hat) ^ 2) / (muxt_hat ^ 2), 1, mean)
+    tmpvar1 <- ((Fxt_1 - muxt_hat)^2 - (muxt_hat / E1))
+    # tmpvar1[tmpvar1 == 1] <- NA
+    varthetax_1 <- pmax(0,
+                        apply(tmpvar1, 1, sum, na.rm = T) / apply(muxt_hat^2, 1, sum, na.rm = T),
+                        na.rm = T)
+    
+    tmpvar2 <- ((Fxt_2 - muxt_hat)^2 - (muxt_hat / E2))
+    # tmpvar1[tmpvar1 == 1] <- NA
+    varthetax_2 <- pmax(0,
+                        apply(tmpvar2, 1, sum, na.rm = T) / apply(muxt_hat^2, 1, sum, na.rm = T),
+                        na.rm = T)
     
     Z_1 <- 1 / (1 + varthetax_1 * apply(E1 * muxt_hat, 1, sum))
     Z_1_mx <- matrix(rep(Z_1,forecasting_horizon),byrow = F,ncol = forecasting_horizon)
@@ -215,7 +224,7 @@ for (model_option in c("lc", "apc", "rh")) {
       labs(color="")+
       scale_color_manual(values = c("C1" = "#4169E1", 
                                     "C2" = "#a71429"),
-                         labels = c(expression(C[x]^1), expression(C[x]^2))) 
+                         labels = c(expression(theta[x]^1), expression(theta[x]^2))) 
     
     ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\",model_option,"Cs.pdf"),
            width = 8,

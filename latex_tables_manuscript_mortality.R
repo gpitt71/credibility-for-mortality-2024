@@ -1,5 +1,72 @@
 library(data.table)
 library(xtable)
+library(dplyr)
+
+# Simulation study -----
+
+# Age breackets ----
+
+dt_ab <- fread('~/GitHub/credibility-for-mortality-2024/output/results_age_breakets.txt')
+
+
+dt_out=dt_ab %>% 
+  group_by(seed,model, predictor, age_breakets) %>%
+  summarise(error=mean(error),
+            oos_deviance=mean(oos_deviance)) %>% 
+  group_by(model, predictor, age_breakets) %>%
+  reframe(error_resp=mean(error),
+          error_sd=sd(error),
+          oos_deviance_resp=mean(oos_deviance),
+          oos_deviance_sd=sd(oos_deviance))
+
+dt_out %>% 
+  filter(predictor  =="apc",
+         age_breakets=="16-25")
+
+ggplot(dt_out %>% 
+         filter(predictor  =="lc"), aes(x = age_breakets, y = error_resp, color = model, group = model)) +
+  geom_line() +    # Add lines
+  geom_point() +   # Add points
+  theme_minimal() +
+  labs(x = "", y = "", color = "")
+
+ggsave(paste0("C:\\Users\\pwt887\\Documents\\GitHub\\credibility-for-mortality-2024\\output\\","lc","_mare_age_classes.pdf"),
+       width = 8,
+       height= 5)
+
+
+dt_alpha <- fread('~/GitHub/credibility-for-mortality-2024/output/results_scenario2.txt')
+
+dt_beta <- fread('~/GitHub/credibility-for-mortality-2024/output/results_scenario3.txt')
+
+dt_sim<- rbind(dt_alpha,dt_beta)
+
+dt_sim=dt_sim %>% 
+  group_by(seed,model, predictor, forecasting_horizon, scenario) %>%
+  summarise(error=mean(error),
+            oos_deviance=mean(oos_deviance)) %>% 
+  group_by(model, predictor, forecasting_horizon, scenario) %>%
+  reframe(error_resp=mean(error),
+            error_sd=sd(error),
+            oos_deviance_resp=mean(oos_deviance),
+            oos_deviance_sd=sd(oos_deviance))
+
+
+t1 <- dt_sim %>% 
+  filter(predictor  =="apc")
+
+print(xtable(t1%>%
+               select(model, forecasting_horizon,scenario, error_resp,error_sd), digits=4) 
+        ,include.rownames = FALSE)
+
+t2 <- dt_sim %>% 
+  filter(predictor  !="lc")
+
+print(xtable(t2, digits=4),include.rownames = FALSE)
+
+# Real data ----
+
+
 dt1 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/gender_validation_testing_selection_l2.csv")
 dt1[["group"]] <- "G2"
 dt2 <- fread("C:/Users/gpitt/Documents/Postdoc/Torino/Mortality/results/scandinavian_validation_testing_selection_l2.csv")
