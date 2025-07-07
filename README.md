@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/891618766.svg)](https://doi.org/10.5281/zenodo.15829585)
+
 # Forecasting sub-population mortality using credibility theory
 
 This repository contains the code to the results from the manuscript *Forecasting sub-population mortality using credibility theory*.
